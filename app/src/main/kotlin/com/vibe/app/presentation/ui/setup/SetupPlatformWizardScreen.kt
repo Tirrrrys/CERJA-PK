@@ -504,6 +504,7 @@ private fun ModelStep(
         // Auto-fetch models from the custom base URL
         ModelCatalogSection(
             catalog = catalog,
+            selectedModel = model,
             hasApiKey = apiKey.isNotBlank(),
             onRetry = onFetchModels,
             onModelSelected = onModelChange
@@ -523,6 +524,7 @@ private fun ModelStep(
 @Composable
 private fun ModelCatalogSection(
     catalog: ModelCatalogFetcher.FetchState,
+    selectedModel: String,
     hasApiKey: Boolean,
     onRetry: () -> Unit,
     onModelSelected: (String) -> Unit,
@@ -583,7 +585,7 @@ private fun ModelCatalogSection(
                             Text(
                                 text = m,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = if (m == model) {
+                                color = if (m == selectedModel) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     MaterialTheme.colorScheme.onSurface
