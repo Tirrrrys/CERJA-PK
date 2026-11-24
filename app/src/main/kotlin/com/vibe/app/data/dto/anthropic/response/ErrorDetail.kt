@@ -1,0 +1,18 @@
+package com.vibe.app.data.dto.anthropic.response
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ErrorDetail(
+
+    @SerialName("type")
+    val type: String,
+
+    @SerialName("message")
+    val message: String,
+
+    // Filled locally by AnthropicAPIImpl from the HTTP response; never sent by the server.
+    val statusCode: Int? = null,
+    val retryAfterSeconds: Int? = null,
+)
