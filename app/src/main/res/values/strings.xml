@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VibeApp</string>
+    <string name="app_name">CERJA-PK</string>
     <string name="sample_item_title">Item 1</string>
     <string name="sample_item_description">Item description</string>
     <string name="openai" translatable="false">OpenAI</string>
@@ -9,7 +9,7 @@
     <string name="next">Next</string>
     <string name="need_help">Need Help?</string>
     <string name="setup_complete">You’re all set!</string>
-    <string name="setup_complete_description">Let’s start using VibeApp!</string>
+    <string name="setup_complete_description">Let’s start using CERJA-PK!</string>
     <string name="done">Done</string>
     <string name="setup_complete_logo">Setup Complete Logo</string>
     <string name="settings">Settings</string>
@@ -71,9 +71,9 @@
     <string name="license_icon">License Icon</string>
     <string name="feedback_icon">Feedback Icon</string>
     <string name="github_icon">GitHub Icon</string>
-    <string name="github_link" translatable="false">https://github.com/Skykai521/VibeApp</string>
-    <string name="bug_report_link" translatable="false">https://github.com/Skykai521/VibeApp/issues/new/choose</string>
-    <string name="feedback_link" translatable="false">https://github.com/Skykai521/VibeApp/discussions/new/choose</string>
+    <string name="github_link" translatable="false">https://github.com/Tirrrrys/CERJA-PK</string>
+    <string name="bug_report_link" translatable="false">https://github.com/Tirrrrys/CERJA-PK/issues/new/choose</string>
+    <string name="feedback_link" translatable="false">https://github.com/Tirrrrys/CERJA-PK/discussions/new/choose</string>
     <string name="api_url">API URL</string>
     <string name="url_icon">URL Icon</string>
     <string name="invalid_api_url">Please enter a valid URL.</string>
@@ -174,6 +174,19 @@
 
     <string name="model_description">Enter the model identifier you want to use</string>
     <string name="model_examples">Examples: gpt–5.4, claude-sonnet-4-6</string>
+    <string name="model_catalog_title">Available models</string>
+    <string name="model_catalog_refresh">Refresh</string>
+    <string name="model_catalog_loading">Fetching models from the API…</string>
+    <string name="model_catalog_error">Could not fetch models: %1$s. You can still type the model name manually.</string>
+    <string name="model_catalog_empty">No models found. Type the model name manually.</string>
+    <string name="model_catalog_more">…and %1$d more</string>
+    <string name="setup_environment_title">Preparing build tools</string>
+    <string name="setup_environment_description">Extracting the on-device compiler, Android resources and signing keys so your projects can be built into installable APKs. This runs once.</string>
+    <string name="setup_environment_step_binaries">Compiler &amp; packaging tools</string>
+    <string name="setup_environment_step_template">Project template</string>
+    <string name="setup_environment_step_keystore">Signing key</string>
+    <string name="setup_environment_done">Build environment is ready</string>
+    <string name="setup_environment_failed">Preparation failed: %1$s. It will be retried automatically on the next build.</string>
     <string name="back">Back</string>
     <string name="finish">Finish</string>
     <string name="alibaba" translatable="false">Alibaba</string>
@@ -226,7 +239,7 @@
     <string name="notification_channel_ongoing_desc">Shows when AI agent tasks are running in the background</string>
     <string name="notification_channel_result">Task Results</string>
     <string name="notification_channel_result_desc">Notifications when AI agent tasks complete or fail</string>
-    <string name="notification_ongoing_title">VibeApp - Working</string>
+    <string name="notification_ongoing_title">CERJA-PK - Working</string>
     <string name="notification_ongoing_single">1 task in progress</string>
     <string name="notification_ongoing_multiple">%d tasks in progress</string>
     <string name="notification_cancel_all">Cancel All</string>
@@ -241,7 +254,7 @@
 
     <!-- Notification permission -->
     <string name="notification_permission_title">Enable Notifications</string>
-    <string name="notification_permission_rationale">With notification permission, VibeApp can work in the background — you don\'t need to stay on this page. You\'ll be notified when the task is done.</string>
+    <string name="notification_permission_rationale">With notification permission, CERJA-PK can work in the background — you don\'t need to stay on this page. You\'ll be notified when the task is done.</string>
     <string name="notification_permission_grant">Enable</string>
     <string name="notification_permission_skip">Not Now</string>
 

@@ -18,11 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -30,7 +32,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vibe.app.R
 import com.vibe.app.data.model.ClientType
+import com.vibe.app.data.network.ModelCatalogFetcher
 import com.vibe.app.presentation.ui.setup.SetupViewModelV2.Companion.WIZARD_STEP_API_KEY
 import com.vibe.app.presentation.ui.setup.SetupViewModelV2.Companion.WIZARD_STEP_BASICS
 import com.vibe.app.presentation.ui.setup.SetupViewModelV2.Companion.WIZARD_STEP_MODEL
@@ -183,9 +188,16 @@ fun SetupPlatformWizardScreen(
                     WIZARD_STEP_MODEL -> {
                         // Collect model state directly inside AnimatedContent for proper recomposition
                         val currentModel by setupViewModel.model.collectAsStateWithLifecycle()
+                        val currentCatalog by setupViewModel.modelCatalog.collectAsStateWithLifecycle()
+                        val currentApiUrlForModels by setupViewModel.apiUrl.collectAsStateWithLifecycle()
+                        val currentApiKeyForModels by setupViewModel.apiKey.collectAsStateWithLifecycle()
                         ModelStep(
                             model = currentModel,
-                            onModelChange = setupViewModel::updateModel
+                            onModelChange = setupViewModel::updateModel,
+                            catalog = currentCatalog,
+                            apiUrl = currentApiUrlForModels,
+                            apiKey = currentApiKeyForModels,
+                            onFetchModels = setupViewModel::fetchModels
                         )
                     }
                 }
@@ -439,8 +451,19 @@ private fun ApiKeyStep(
 private fun ModelStep(
     model: String,
     onModelChange: (String) -> Unit,
+    catalog: ModelCatalogFetcher.FetchState,
+    apiUrl: String,
+    apiKey: String,
+    onFetchModels: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Auto-fetch the model list when this step becomes visible
+    LaunchedEffect(apiUrl) {
+        if (apiUrl.isNotBlank()) {
+            onFetchModels()
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -478,12 +501,120 @@ private fun ModelStep(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Auto-fetch models from the custom base URL
+        ModelCatalogSection(
+            catalog = catalog,
+            hasApiKey = apiKey.isNotBlank(),
+            onRetry = onFetchModels,
+            onModelSelected = onModelChange
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Examples
         Text(
             text = stringResource(R.string.model_examples),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+@Composable
+private fun ModelCatalogSection(
+    catalog: ModelCatalogFetcher.FetchState,
+    hasApiKey: Boolean,
+    onRetry: () -> Unit,
+    onModelSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(R.string.model_catalog_title),
+                style = MaterialTheme.typography.labelLarge
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            TextButton(onClick = onRetry, enabled = !catalog.isLoading) {
+                if (catalog.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(14.dp),
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+                Text(stringResource(R.string.model_catalog_refresh))
+            }
+        }
+
+        when {
+            catalog.isLoading -> {
+                Text(
+                    text = stringResource(R.string.model_catalog_loading),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            catalog.error != null -> {
+                Text(
+                    text = stringResource(R.string.model_catalog_error, catalog.error),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            catalog.models.isEmpty() -> {
+                Text(
+                    text = stringResource(R.string.model_catalog_empty),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            else -> {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column {
+                        catalog.models.take(MAX_VISIBLE_MODELS).forEachIndexed { index, m ->
+                            Text(
+                                text = m,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (m == model) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onModelSelected(m) }
+                                    .padding(horizontal = 14.dp, vertical = 10.dp)
+                            )
+                            if (index < minOf(catalog.models.size, MAX_VISIBLE_MODELS) - 1) {
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                    thickness = 0.5.dp
+                                )
+                            }
+                        }
+                        if (catalog.models.size > MAX_VISIBLE_MODELS) {
+                            Text(
+                                text = stringResource(
+                                    R.string.model_catalog_more,
+                                    catalog.models.size - MAX_VISIBLE_MODELS
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -532,6 +663,8 @@ private fun WizardNavigationButtons(
         }
     }
 }
+
+private const val MAX_VISIBLE_MODELS = 8
 
 private fun getApiHelpUrl(clientType: ClientType): String? = when (clientType) {
     ClientType.OPENAI -> "https://platform.openai.com/account/api-keys"

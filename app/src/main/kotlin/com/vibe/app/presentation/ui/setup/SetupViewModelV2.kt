@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import com.vibe.app.data.ModelConstants
 import com.vibe.app.data.database.entity.PlatformV2
 import com.vibe.app.data.model.ClientType
+import com.vibe.app.data.network.ModelCatalogFetcher
 import com.vibe.app.data.repository.SettingRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -55,6 +56,12 @@ class SetupViewModelV2 @Inject constructor(
     private val _saveStatus = MutableStateFlow<SaveStatus>(SaveStatus.Idle)
     val saveStatus: StateFlow<SaveStatus> = _saveStatus.asStateFlow()
 
+    // Auto-fetched model catalog for the current base URL
+    private val _modelCatalog = MutableStateFlow(ModelCatalogFetcher.FetchState())
+    val modelCatalog: StateFlow<ModelCatalogFetcher.FetchState> = _modelCatalog.asStateFlow()
+
+    private var lastFetchedUrlKey: String? = null
+
     private val _switchedPlatformEvent = MutableSharedFlow<String>()
     val switchedPlatformEvent: SharedFlow<String> = _switchedPlatformEvent.asSharedFlow()
 
@@ -84,6 +91,10 @@ class SetupViewModelV2 @Inject constructor(
 
     fun updateApiUrl(url: String) {
         _apiUrl.value = url
+        // Reset the catalog when the user edits the URL so a stale list is never reused
+        if (ModelCatalogFetcher.normalizeBaseUrl(url) != lastFetchedUrlKey) {
+            _modelCatalog.value = ModelCatalogFetcher.FetchState()
+        }
     }
 
     fun updateApiKey(key: String) {
@@ -92,6 +103,39 @@ class SetupViewModelV2 @Inject constructor(
 
     fun updateModel(modelName: String) {
         _model.value = modelName
+    }
+
+    /**
+     * Auto-fetches the model catalog from the currently entered base URL.
+     * Repeated calls for the same URL while a fetch is in flight are ignored.
+     */
+    fun fetchModels() {
+        val url = _apiUrl.value
+        if (url.isBlank()) return
+        val key = ModelCatalogFetcher.normalizeBaseUrl(url)
+        val current = _modelCatalog.value
+        if (current.isLoading) return
+        if (key == lastFetchedUrlKey && current.models.isNotEmpty()) return
+        lastFetchedUrlKey = key
+        _modelCatalog.value = ModelCatalogFetcher.FetchState(isLoading = true)
+        viewModelScope.launch {
+            val result = ModelCatalogFetcher.fetchModels(url, _apiKey.value, _selectedClientType.value)
+            result.fold(
+                onSuccess = { models ->
+                    // Keep the catalog only if the URL hasn't changed while fetching
+                    if (ModelCatalogFetcher.normalizeBaseUrl(_apiUrl.value) == key) {
+                        _modelCatalog.value = ModelCatalogFetcher.FetchState(models = models)
+                    }
+                },
+                onFailure = { e ->
+                    if (ModelCatalogFetcher.normalizeBaseUrl(_apiUrl.value) == key) {
+                        _modelCatalog.value = ModelCatalogFetcher.FetchState(
+                            error = e.message ?: "Failed to fetch models"
+                        )
+                    }
+                },
+            )
+        }
     }
 
     fun nextWizardStep() {
@@ -109,6 +153,8 @@ class SetupViewModelV2 @Inject constructor(
         _apiUrl.value = ""
         _apiKey.value = ""
         _model.value = ""
+        _modelCatalog.value = ModelCatalogFetcher.FetchState()
+        lastFetchedUrlKey = null
     }
 
     fun savePlatform() {
@@ -121,7 +167,7 @@ class SetupViewModelV2 @Inject constructor(
                     name = _platformName.value.trim(),
                     compatibleType = clientType,
                     enabled = true,
-                    apiUrl = _apiUrl.value.trim(),
+                    apiUrl = ModelCatalogFetcher.normalizeBaseUrl(_apiUrl.value),
                     token = _apiKey.value.trim().takeIf { it.isNotEmpty() },
                     model = _model.value.trim(),
                     temperature = 1.0f,

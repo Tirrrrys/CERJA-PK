@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VibeApp</string>
+    <string name="app_name">CERJA-PK</string>
     <string name="openai_description">مُنشئ ChatGPT.</string>
     <string name="anthropic_description">وُلد Claude هنا.</string>
     <string name="sample_item_title">العنصر 1</string>
@@ -8,7 +8,7 @@
     <string name="next">التالي</string>
     <string name="need_help">هل تحتاج مساعدة؟</string>
     <string name="setup_complete">أنت جاهز!</string>
-    <string name="setup_complete_description">لنبدأ باستخدام VibeApp!</string>
+    <string name="setup_complete_description">لنبدأ باستخدام CERJA-PK!</string>
     <string name="token_not_set">لم يتم تعيين الرمز المميز</string>
     <string name="token_set">تم تعيين الرمز المميز كـ %s*****</string>
     <string name="close">إغلاق</string>

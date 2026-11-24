@@ -15,11 +15,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.vibe.app"
+        applicationId = "com.cerja.pk"
         minSdk = 29
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.9.0"
+        versionCode = 16
+        versionName = "1.0.0-cerja"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -30,6 +30,12 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    // Expose the packaged-binary resolver so the app can pre-extract the on-device
+    // build tools during first-run setup instead of waiting for the first build.
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

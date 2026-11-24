@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="system_default">النظام الافتراضي</string>
-    <string name="app_name">VibeApp</string>
+    <string name="app_name">CERJA-PK</string>
     <string name="sample_item_title">العنصر 1</string>
     <string name="sample_item_description">وصف العنصر</string>
     <string name="openai_description">مُنشئ ChatGPT.</string>
@@ -9,7 +9,7 @@
     <string name="next">التالي</string>
     <string name="need_help">هل تحتاج مساعدة؟</string>
     <string name="setup_complete">أنت جاهز!</string>
-    <string name="setup_complete_description">لنبدأ باستخدام VibeApp!</string>
+    <string name="setup_complete_description">لنبدأ باستخدام CERJA-PK!</string>
     <string name="ask_a_question">اطرح سؤالاً…</string>
     <string name="some_platforms_disabled">بعض واجهات برمجة التطبيقات معطلة</string>
     <string name="temperature">درجة الحرارة</string>

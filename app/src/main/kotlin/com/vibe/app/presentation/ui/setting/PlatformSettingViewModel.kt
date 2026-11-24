@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.vibe.app.data.database.entity.PlatformV2
+import com.vibe.app.data.network.ModelCatalogFetcher
 import com.vibe.app.data.repository.SettingRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,6 +33,9 @@ class PlatformSettingViewModel @Inject constructor(
 
     private val _isDeleted = MutableStateFlow(false)
     val isDeleted: StateFlow<Boolean> = _isDeleted.asStateFlow()
+
+    private val _modelCatalog = MutableStateFlow(ModelCatalogFetcher.FetchState())
+    val modelCatalog: StateFlow<ModelCatalogFetcher.FetchState> = _modelCatalog.asStateFlow()
 
     /** Emits the name of the newly enabled platform when another was disabled */
     private val _switchedPlatformEvent = MutableSharedFlow<String>()
@@ -115,7 +119,7 @@ class PlatformSettingViewModel @Inject constructor(
 
     fun updateApiUrl(url: String) {
         _platformState.value?.let { platform ->
-            updatePlatform(platform.copy(apiUrl = url.trim()))
+            updatePlatform(platform.copy(apiUrl = ModelCatalogFetcher.normalizeBaseUrl(url)))
             closeApiUrlDialog()
         }
     }
@@ -131,6 +135,32 @@ class PlatformSettingViewModel @Inject constructor(
         _platformState.value?.let { platform ->
             updatePlatform(platform.copy(model = model.trim()))
             closeApiModelDialog()
+        }
+    }
+
+    /** Auto-fetches the model list from this platform's base URL. */
+    fun fetchModels() {
+        val platform = _platformState.value ?: return
+        if (platform.apiUrl.isBlank()) return
+        val current = _modelCatalog.value
+        if (current.isLoading) return
+        _modelCatalog.value = ModelCatalogFetcher.FetchState(isLoading = true)
+        viewModelScope.launch {
+            val result = ModelCatalogFetcher.fetchModels(
+                platform.apiUrl,
+                platform.token,
+                platform.compatibleType,
+            )
+            result.fold(
+                onSuccess = { models ->
+                    _modelCatalog.value = ModelCatalogFetcher.FetchState(models = models)
+                },
+                onFailure = { e ->
+                    _modelCatalog.value = ModelCatalogFetcher.FetchState(
+                        error = e.message ?: "Failed to fetch models"
+                    )
+                },
+            )
         }
     }
 

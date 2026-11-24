@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VibeApp</string>
+    <string name="app_name">CERJA-PK</string>
     <string name="sample_item_title">Elemento 1</string>
     <string name="sample_item_description">Descripción del elemento</string>
     <string name="openai_description">Creador de ChatGPT.</string>
@@ -8,7 +8,7 @@
     <string name="next">Siguiente</string>
     <string name="need_help">¿Necesitas ayuda?</string>
     <string name="setup_complete">¡Ya está!</string>
-    <string name="setup_complete_description">¡Empieza a usar VibeApp!</string>
+    <string name="setup_complete_description">¡Empieza a usar CERJA-PK!</string>
     <string name="done">Hecho</string>
     <string name="setup_complete_logo">Logo Setup Completado</string>
     <string name="settings">Ajustes</string>
