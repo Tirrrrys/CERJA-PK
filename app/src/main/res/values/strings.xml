@@ -174,19 +174,19 @@
 
     <string name="model_description">Enter the model identifier you want to use</string>
     <string name="model_examples">Examples: gpt–5.4, claude-sonnet-4-6</string>
-    <string name="model_catalog_title">Available models</string>
-    <string name="model_catalog_refresh">Refresh</string>
-    <string name="model_catalog_loading">Fetching models from the API…</string>
-    <string name="model_catalog_error">Could not fetch models: %1$s. You can still type the model name manually.</string>
-    <string name="model_catalog_empty">No models found. Type the model name manually.</string>
-    <string name="model_catalog_more">…and %1$d more</string>
-    <string name="setup_environment_title">Preparing build tools</string>
-    <string name="setup_environment_description">Extracting the on-device compiler, Android resources and signing keys so your projects can be built into installable APKs. This runs once.</string>
-    <string name="setup_environment_step_binaries">Compiler &amp; packaging tools</string>
-    <string name="setup_environment_step_template">Project template</string>
-    <string name="setup_environment_step_keystore">Signing key</string>
-    <string name="setup_environment_done">Build environment is ready</string>
-    <string name="setup_environment_failed">Preparation failed: %1$s. It will be retried automatically on the next build.</string>
+    <string name="model_catalog_title" translatable="false">Available models</string>
+    <string name="model_catalog_refresh" translatable="false">Refresh</string>
+    <string name="model_catalog_loading" translatable="false">Fetching models from the API…</string>
+    <string name="model_catalog_error" translatable="false">Could not fetch models: %1$s. You can still type the model name manually.</string>
+    <string name="model_catalog_empty" translatable="false">No models found. Type the model name manually.</string>
+    <string name="model_catalog_more" translatable="false">…and %1$d more</string>
+    <string name="setup_environment_title" translatable="false">Preparing build tools</string>
+    <string name="setup_environment_description" translatable="false">Extracting the on-device compiler, Android resources and signing keys so your projects can be built into installable APKs. This runs once.</string>
+    <string name="setup_environment_step_binaries" translatable="false">Compiler &amp; packaging tools</string>
+    <string name="setup_environment_step_template" translatable="false">Project template</string>
+    <string name="setup_environment_step_keystore" translatable="false">Signing key</string>
+    <string name="setup_environment_done" translatable="false">Build environment is ready</string>
+    <string name="setup_environment_failed" translatable="false">Preparation failed: %1$s. It will be retried automatically on the next build.</string>
     <string name="back">Back</string>
     <string name="finish">Finish</string>
     <string name="alibaba" translatable="false">Alibaba</string>
