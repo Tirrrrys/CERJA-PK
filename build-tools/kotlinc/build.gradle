@@ -16,7 +16,7 @@ dependencies {
     runtimeOnly ('org.jetbrains.kotlin:kotlin-reflect:1.7.10')
 
     api 'org.jetbrains.trove4j:trove4j:20160824'
-    api files('libs/kotlin-compiler-embeddable-1.7.20-RC.jar')
+    api 'org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.20-RC'
 
     compileOnly files('libs/the-unsafe.jar')
     compileOnly project(path: ':build-tools:android-stubs')
